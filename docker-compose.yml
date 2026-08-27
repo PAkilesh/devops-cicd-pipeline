@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: project3-postgres-compose
+    environment:
+      POSTGRES_USER: assetuser
+      POSTGRES_PASSWORD: assetpass
+      POSTGRES_DB: assetdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - project3-network
+
+  flask:
+    build:
+      context: ./backend
+    container_name: project3-flask-compose
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: assetdb
+      DB_USER: assetuser
+      DB_PASSWORD: assetpass
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    networks:
+      - project3-network
+
+volumes:
+  postgres_data:
+
+networks:
+  project3-network:
