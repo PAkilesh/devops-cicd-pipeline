@@ -16,7 +16,7 @@ def get_db_connection():
 
 
 @app.route("/")
-def home():
+def home(
     return "Python Flask API is running"
 
 
