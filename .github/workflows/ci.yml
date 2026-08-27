@@ -54,3 +54,25 @@ jobs:
       - name: Push Docker image
         if: github.event_name == 'push'
         run: docker push ghcr.io/pakilesh/devops-cicd-pipeline:latest
+
+  deploy:
+    if: github.event_name == 'push'
+    needs: test-and-build
+    runs-on: self-hosted
+
+    steps:
+      - name: Pull latest Docker image
+        run: docker pull ghcr.io/pakilesh/devops-cicd-pipeline:latest
+
+      - name: Stop old container
+        run: docker stop devops-cicd-app || true
+
+      - name: Remove old container
+        run: docker rm devops-cicd-app || true
+
+      - name: Start new container
+        run: |
+          docker run -d \
+            --name devops-cicd-app \
+            -p 5000:5000 \
+            ghcr.io/pakilesh/devops-cicd-pipeline:latest
