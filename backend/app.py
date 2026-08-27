@@ -23,7 +23,7 @@ def home():
 @app.route("/health")
 def health():
     return jsonify({
-        "status": "broken",
+        "status": "healthy",
         "service": "flask-backend"
     })
 
