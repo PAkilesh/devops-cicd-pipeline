@@ -29,5 +29,9 @@ jobs:
         working-directory: backend
         run: python -m py_compile app.py
 
+      - name: Run automated tests
+        working-directory: backend
+        run: pytest -v
+
       - name: Build Docker image
         run: docker build -t devops-cicd-app:test ./backend
