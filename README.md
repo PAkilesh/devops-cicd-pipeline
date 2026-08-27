@@ -1,46 +1,91 @@
-# Python Flask + PostgreSQL Docker Compose Project
+# DevOps CI/CD Pipeline with GitHub Actions, Docker, GHCR and AWS EC2
 
-A containerized IT Asset Management API built using Python Flask, PostgreSQL, Docker, and Docker Compose.
+A complete CI/CD project that automatically tests a Python Flask application, builds a Docker image, pushes it to GitHub Container Registry (GHCR), and deploys it to an AWS EC2 instance using a self-hosted GitHub Actions runner.
 
-## Project Overview
+## Project Architecture
 
-This project demonstrates how to build a Python backend API, connect it to PostgreSQL, containerize the application with Docker, run multiple services using Docker Compose, persist database data using Docker volumes, and troubleshoot service-to-service communication issues.
-
-## Architecture
-
-Client / Browser  
-↓  
-Python Flask API  
-↓  
-Docker Network  
-↓  
-PostgreSQL Database  
-↓  
-Docker Volume
+Developer
+   |
+   | git push
+   v
+GitHub Repository
+   |
+   v
+GitHub Actions
+   |
+   +--> Install Python dependencies
+   |
+   +--> Check Python syntax
+   |
+   +--> Run pytest automated tests
+   |
+   +--> Build Docker image
+   |
+   +--> Push Docker image to GHCR
+   |
+   v
+GitHub Container Registry
+   |
+   v
+AWS EC2 Self-Hosted Runner
+   |
+   +--> Pull latest Docker image
+   |
+   +--> Stop old container
+   |
+   +--> Remove old container
+   |
+   +--> Start new container
+   |
+   v
+Flask Application
+Port 5000
 
 ## Technologies Used
 
-- Python 3
+- Python
 - Flask
-- PostgreSQL 16
-- psycopg2
+- pytest
 - Docker
-- Docker Compose
-- Docker Networking
-- Docker Volumes
+- GitHub Actions
+- GitHub Container Registry
+- AWS EC2
+- Linux
 - Git
 - GitHub
+- CI/CD
+- Self-hosted GitHub Actions Runner
 
-## Project Structure
+## CI Pipeline
 
-```text
-docker-compose-fullstack/
-├── backend/
-│   ├── app.py
-│   ├── Dockerfile
-│   └── requirements.txt
-├── database/
-│   └── init.sql
-├── docker-compose.yml
-├── .gitignore
-└── README.md
+The CI stage runs automatically on every push to the main branch.
+
+The pipeline performs:
+
+1. Checkout source code
+2. Set up Python 3.13
+3. Install dependencies
+4. Check Python syntax
+5. Run automated pytest tests
+6. Build Docker image
+7. Log in to GHCR
+8. Push Docker image to GHCR
+
+## Automated Testing
+
+The project uses pytest to validate the Flask health endpoint.
+
+Example test:
+
+```python
+def test_health_endpoint():
+    client = app.test_client()
+
+    response = client.get("/health")
+
+    assert response.status_code == 200
+
+    data = response.get_json()
+
+    assert data["status"] == "healthy"
+    assert data["service"] == "flask-backend"
